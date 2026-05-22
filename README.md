@@ -1,189 +1,141 @@
-### Aircraft Damage Classification and Captioning Using Pretrained Deep Learning Models
+# ✈️ Aircraft Damage Classification & Captioning
+### Automated Aviation Inspection using Transfer Learning + Transformer NLP
 
-### Project Overview
+![Python](https://img.shields.io/badge/Python-3.8+-blue?style=flat-square&logo=python)
+![TensorFlow](https://img.shields.io/badge/TensorFlow-2.x-orange?style=flat-square&logo=tensorflow)
+![PyTorch](https://img.shields.io/badge/PyTorch-2.x-red?style=flat-square&logo=pytorch)
+![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
 
-    Aircraft damage inspection is a critical task for ensuring flight safety and maintaining structural integrity. Traditional manual inspection methods are time-consuming, costly, and prone to human error. This project presents an   
-    automated deep learning pipeline that combines computer vision and natural language processing to classify aircraft damage and generate descriptive captions for damaged aircraft images.
- 
-    The system performs two complementary tasks:
-    
-    Damage Classification – Classifies aircraft damage into Dent or Crack using feature extraction from a pre-trained VGG16 convolutional neural network.
-    
-    Damage Captioning & Summarization – Generates human-readable captions and summaries for aircraft damage images using a Transformer-based BLIP model, improving explainability and interpretability.
-    
-    This project demonstrates how deep learning can modernize aircraft inspection workflows, reduce manual effort, and support maintenance decision-making in the aviation industry.
+> An end-to-end deep learning pipeline that classifies aircraft structural damage **and** generates natural-language maintenance reports — replacing error-prone manual inspections with an explainable AI system.
 
+---
 
-### Project Objectives
+## 🎯 What This Project Does
 
-    Automate aircraft damage classification using transfer learning
-    
-    Leverage pretrained CNNs for robust feature extraction
-    
-    Generate natural-language captions and summaries for damaged aircraft images
-    
-    Integrate computer vision and NLP into a unified inspection pipeline
-    
-    Build an interpretable and real-world applicable AI solution
+Manual aircraft inspection is slow, costly, and prone to human error. This system automates two critical tasks:
 
+| Task | Model | Output |
+|------|-------|--------|
+| **Damage Classification** | VGG16 (Transfer Learning) | Dent vs. Crack — binary classification |
+| **Damage Captioning** | BLIP Transformer (PyTorch) | Human-readable damage description + summary |
 
-### Model Architecture
-    🔹 Damage Classification
-    
-            Model: VGG16 (pretrained on ImageNet)
-            
-            Approach: Feature extraction (frozen convolutional layers)
-            
-            Classifier:
-            
-            Fully connected layers
-            
-            Dropout for regularization
-            
-            Sigmoid activation for binary classification
-    
-    🔹 Image Captioning & Summarization
-    
-        Model: BLIP (Bootstrapped Language-Image Pretraining)
-        
-        Architecture: Transformer-based multimodal model
-        
-        Outputs:
-        
-        Image caption (short description)
-        
-        Image summary (more detailed explanation)
+Both pipelines are unified into a single inference workflow — input an aircraft image, get a classification **and** an explainable natural-language report.
 
+---
 
-### Dataset Structure
+## 🏗️ Architecture
 
-```text
+```
+Input Image (224×224)
+        │
+        ▼
+┌─────────────────────┐      ┌──────────────────────────┐
+│   VGG16 Backbone    │      │     BLIP Transformer      │
+│  (frozen, ImageNet) │      │  (multimodal, PyTorch)    │
+│         +           │      │                           │
+│  Custom Dense Head  │      │  Caption + Summarization  │
+│  Sigmoid → Binary   │      │  Output                   │
+└────────┬────────────┘      └────────────┬─────────────┘
+         │                               │
+         ▼                               ▼
+  Dent / Crack Label          Natural-Language Report
+```
 
+---
+
+## ⚙️ Tech Stack
+
+- **Computer Vision** — TensorFlow, Keras, VGG16 (ImageNet pretrained)
+- **Language Pipeline** — PyTorch, BLIP Transformer, Hugging Face Transformers
+- **Training** — Transfer learning with frozen backbone, custom classification head
+- **Utilities** — NumPy, Matplotlib, tf.py_function (CV+NLP bridge)
+
+---
+
+## 📁 Dataset Structure
+
+```
 aircraft_damage_dataset_v1/
-│
 ├── train/
 │   ├── dent/
 │   └── crack/
-│
 ├── valid/
 │   ├── dent/
 │   └── crack/
-│
 └── test/
     ├── dent/
     └── crack/
 ```
 
-    Images are resized to 224 × 224
-    
-    Pixel values are normalized to [0, 1]
-    
-    Binary labels: dent and crack
+Images resized to `224×224`, normalized to `[0, 1]`. Binary labels: `dent` / `crack`.
 
+---
 
-### Configuration
+## 🔧 Training Configuration
 
-    Parameter	Value
-    Image Size	224 × 224
-    Batch Size	32
-    Epochs	10
-    Optimizer	Adam
-    Learning Rate	0.0001
-    Loss Function	Binary Crossentropy
+| Parameter | Value |
+|-----------|-------|
+| Image Size | 224 × 224 |
+| Batch Size | 32 |
+| Epochs | 10 |
+| Optimizer | Adam |
+| Learning Rate | 0.0001 |
+| Loss Function | Binary Crossentropy |
 
-### Training & Evaluation
+VGG16 convolutional layers are **frozen** — only the custom classification head is trained, preventing overfitting and dramatically reducing training time.
 
-    The VGG16 backbone is frozen to prevent overfitting
-    
-    Only the custom classification head is trained
-    
-    Model performance is evaluated on a held-out test set
-    
-    Metrics:
-    
-    Accuracy
-    
-    Loss
-    
-    Visual inspection of predictions
+---
 
+## 📊 Results
 
- ### Visualization
+- ✅ High accuracy on binary damage classification (Dent vs. Crack)
+- ✅ Robust generalization via pretrained CNN feature extraction
+- ✅ Meaningful, human-readable captions generated by BLIP
+- ✅ Strong CV + NLP synergy in a unified single inference pipeline
 
-    Displays test images with:
-    
-    Ground truth label
-    
-    Model prediction
-    
-    Helps visually validate classification performance
+---
 
+## 🚀 Getting Started
 
-### Captioning & Summarization Pipeline
+```bash
+# Clone the repo
+git clone https://github.com/yourusername/aircraft-damage-classification.git
+cd aircraft-damage-classification
 
-    Uses BLIP, a pretrained Transformer model
-    
-    Generates:
-    
-    Caption: Brief description of the image
-    
-    Summary: Detailed explanation of the damage
-    
-    Integrates PyTorch inference within a TensorFlow workflow using tf.py_function
+# Install dependencies
+pip install -r requirements.txt
 
+# Run classification + captioning
+python inference.py --image path/to/aircraft_image.jpg
+```
 
-### Technologies Used
+---
 
-    Python
-    
-    TensorFlow / Keras
-    
-    PyTorch
-    
-    VGG16 (Transfer Learning)
-    
-    BLIP Transformer
-    
-    NumPy, Matplotlib
-    
-    Hugging Face Transformers
+## 🌍 Real-World Applications
 
-### Results
+- Automated aircraft maintenance inspection
+- Reduced inspection time and operational cost
+- Improved aviation safety compliance
+- Assistive decision-making for maintenance engineers
+- Scalable inspection systems for aviation fleets
 
-    High accuracy achieved for binary damage classification
-    
-    Robust generalization using pretrained CNN features
-    
-    Meaningful and human-readable captions generated by the BLIP model
-    
-    Demonstrates strong synergy between vision and language models
-    
+---
 
-### Real-World Applications
+## 🔭 Roadmap
 
-    Automated aircraft maintenance inspection
-    
-    Reduced inspection time and cost
-    
-    Improved safety compliance
-    
-    Assistive decision-making for maintenance engineers
-    
-    Scalable inspection systems for aviation fleets
+- [ ] Multi-class damage classification (beyond Dent/Crack)
+- [ ] Damage localization via object detection (YOLOv8)
+- [ ] Fine-tune BLIP on domain-specific aviation data
+- [ ] REST API deployment (FastAPI + Docker)
+- [ ] Integration with airline maintenance reporting systems
 
+---
 
-### Future Improvements
+## 👤 Author
 
-    Multi-class damage classification
-    
-    Damage localization using object detection
-    
-    Fine-tuning BLIP on domain-specific aircraft data
-    
-    Deployment as a web or mobile application
-    
-    Integration with maintenance reporting systems
+**Amar Kumar** — Senior Backend Engineer · IBM Certified AI Engineer  
+[LinkedIn](https://www.linkedin.com/in/amarkumar241429017/) · [GitHub](https://github.com/amarkumar55)
 
+---
 
-### Author
-### Amar Kumar
+*Built to demonstrate practical deep learning in safety-critical domains — where accuracy and explainability are non-negotiable.*
